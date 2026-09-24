@@ -19,7 +19,10 @@ import { Route as SinophraFacturationRouteImport } from './routes/sinophra.factu
 import { Route as SinophraFournisseursRouteImport } from './routes/sinophra.fournisseurs'
 import { Route as SinophraImportationsRouteImport } from './routes/sinophra.importations'
 import { Route as SinophraPiecesRouteImport } from './routes/sinophra.pieces'
+import { Route as SinophraRevendeursRouteImport } from './routes/sinophra.revendeurs'
 import { Route as SinophraStockRouteImport } from './routes/sinophra.stock'
+import { Route as SinophraRevendeursIndexRouteImport } from './routes/sinophra.revendeurs.index'
+import { Route as SinophraRevendeursIdRouteImport } from './routes/sinophra.revendeurs.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -71,10 +74,25 @@ const SinophraPiecesRoute = SinophraPiecesRouteImport.update({
   path: '/pieces',
   getParentRoute: () => SinophraRoute,
 } as any)
+const SinophraRevendeursRoute = SinophraRevendeursRouteImport.update({
+  id: '/revendeurs',
+  path: '/revendeurs',
+  getParentRoute: () => SinophraRoute,
+} as any)
 const SinophraStockRoute = SinophraStockRouteImport.update({
   id: '/stock',
   path: '/stock',
   getParentRoute: () => SinophraRoute,
+} as any)
+const SinophraRevendeursIndexRoute = SinophraRevendeursIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SinophraRevendeursRoute,
+} as any)
+const SinophraRevendeursIdRoute = SinophraRevendeursIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => SinophraRevendeursRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -87,8 +105,11 @@ export interface FileRoutesByFullPath {
   '/sinophra/fournisseurs': typeof SinophraFournisseursRoute
   '/sinophra/importations': typeof SinophraImportationsRoute
   '/sinophra/pieces': typeof SinophraPiecesRoute
+  '/sinophra/revendeurs': typeof SinophraRevendeursRouteWithChildren
   '/sinophra/stock': typeof SinophraStockRoute
   '/sinophra/': typeof SinophraIndexRoute
+  '/sinophra/revendeurs/$id': typeof SinophraRevendeursIdRoute
+  '/sinophra/revendeurs/': typeof SinophraRevendeursIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -101,6 +122,8 @@ export interface FileRoutesByTo {
   '/sinophra/pieces': typeof SinophraPiecesRoute
   '/sinophra/stock': typeof SinophraStockRoute
   '/sinophra': typeof SinophraIndexRoute
+  '/sinophra/revendeurs/$id': typeof SinophraRevendeursIdRoute
+  '/sinophra/revendeurs': typeof SinophraRevendeursIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -113,8 +136,11 @@ export interface FileRoutesById {
   '/sinophra/fournisseurs': typeof SinophraFournisseursRoute
   '/sinophra/importations': typeof SinophraImportationsRoute
   '/sinophra/pieces': typeof SinophraPiecesRoute
+  '/sinophra/revendeurs': typeof SinophraRevendeursRouteWithChildren
   '/sinophra/stock': typeof SinophraStockRoute
   '/sinophra/': typeof SinophraIndexRoute
+  '/sinophra/revendeurs/$id': typeof SinophraRevendeursIdRoute
+  '/sinophra/revendeurs/': typeof SinophraRevendeursIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -128,8 +154,11 @@ export interface FileRouteTypes {
     | '/sinophra/fournisseurs'
     | '/sinophra/importations'
     | '/sinophra/pieces'
+    | '/sinophra/revendeurs'
     | '/sinophra/stock'
     | '/sinophra/'
+    | '/sinophra/revendeurs/$id'
+    | '/sinophra/revendeurs/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -142,6 +171,8 @@ export interface FileRouteTypes {
     | '/sinophra/pieces'
     | '/sinophra/stock'
     | '/sinophra'
+    | '/sinophra/revendeurs/$id'
+    | '/sinophra/revendeurs'
   id:
     | '__root__'
     | '/'
@@ -153,8 +184,11 @@ export interface FileRouteTypes {
     | '/sinophra/fournisseurs'
     | '/sinophra/importations'
     | '/sinophra/pieces'
+    | '/sinophra/revendeurs'
     | '/sinophra/stock'
     | '/sinophra/'
+    | '/sinophra/revendeurs/$id'
+    | '/sinophra/revendeurs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -235,6 +269,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SinophraPiecesRouteImport
       parentRoute: typeof SinophraRoute
     }
+    '/sinophra/revendeurs': {
+      id: '/sinophra/revendeurs'
+      path: '/revendeurs'
+      fullPath: '/sinophra/revendeurs'
+      preLoaderRoute: typeof SinophraRevendeursRouteImport
+      parentRoute: typeof SinophraRoute
+    }
     '/sinophra/stock': {
       id: '/sinophra/stock'
       path: '/stock'
@@ -242,8 +283,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SinophraStockRouteImport
       parentRoute: typeof SinophraRoute
     }
+    '/sinophra/revendeurs/': {
+      id: '/sinophra/revendeurs/'
+      path: '/'
+      fullPath: '/sinophra/revendeurs/'
+      preLoaderRoute: typeof SinophraRevendeursIndexRouteImport
+      parentRoute: typeof SinophraRevendeursRoute
+    }
+    '/sinophra/revendeurs/$id': {
+      id: '/sinophra/revendeurs/$id'
+      path: '/$id'
+      fullPath: '/sinophra/revendeurs/$id'
+      preLoaderRoute: typeof SinophraRevendeursIdRouteImport
+      parentRoute: typeof SinophraRevendeursRoute
+    }
   }
 }
+
+interface SinophraRevendeursRouteChildren {
+  SinophraRevendeursIdRoute: typeof SinophraRevendeursIdRoute
+  SinophraRevendeursIndexRoute: typeof SinophraRevendeursIndexRoute
+}
+
+const SinophraRevendeursRouteChildren: SinophraRevendeursRouteChildren = {
+  SinophraRevendeursIdRoute: SinophraRevendeursIdRoute,
+  SinophraRevendeursIndexRoute: SinophraRevendeursIndexRoute,
+}
+
+const SinophraRevendeursRouteWithChildren =
+  SinophraRevendeursRoute._addFileChildren(SinophraRevendeursRouteChildren)
 
 interface SinophraRouteChildren {
   SinophraCatalogueRoute: typeof SinophraCatalogueRoute
@@ -252,6 +320,7 @@ interface SinophraRouteChildren {
   SinophraFournisseursRoute: typeof SinophraFournisseursRoute
   SinophraImportationsRoute: typeof SinophraImportationsRoute
   SinophraPiecesRoute: typeof SinophraPiecesRoute
+  SinophraRevendeursRoute: typeof SinophraRevendeursRouteWithChildren
   SinophraStockRoute: typeof SinophraStockRoute
   SinophraIndexRoute: typeof SinophraIndexRoute
 }
@@ -263,6 +332,7 @@ const SinophraRouteChildren: SinophraRouteChildren = {
   SinophraFournisseursRoute: SinophraFournisseursRoute,
   SinophraImportationsRoute: SinophraImportationsRoute,
   SinophraPiecesRoute: SinophraPiecesRoute,
+  SinophraRevendeursRoute: SinophraRevendeursRouteWithChildren,
   SinophraStockRoute: SinophraStockRoute,
   SinophraIndexRoute: SinophraIndexRoute,
 }
