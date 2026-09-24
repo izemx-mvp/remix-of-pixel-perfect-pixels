@@ -124,14 +124,15 @@ export const dealers: Dealer[] = [
   ["D4", "Rif Moto Tanger", "Tanger", "Nadia Bouhaddou", "0664 33 87 21", "Rue de Fès, Tanger"],
   ["D5", "Speed Moto Agadir", "Agadir", "Karim El Idrissi", "0665 19 62 48", "Av. Hassan II, Agadir"],
   ["D6", "Fès Moto Distribution", "Fès", "Rachid Lamrani", "0666 90 35 17", "Route de Sefrou, Fès"],
-].map(([id, name, city, manager, phone, address]) => ({
-  id,
-  name,
-  city,
-  manager,
-  phone,
-  email: `${id.toLowerCase()}@motopark.ma`,
-  address,
+].map(([id, name, city, manager, phone, address]: string[]) => ({
+  id: id!,
+  name: name!,
+  city: city!,
+  manager: manager!,
+  phone: phone!,
+  email: `${id!.toLowerCase()}@motopark.ma`,
+  address: address!,
+
   status: "Actif" as const,
   since: daysAgo(int(200, 900)),
   monthRevenue: int(180, 920) * 1000,
@@ -151,7 +152,7 @@ export const suppliers: Supplier[] = [
   name: name as string,
   country: country as string,
   contact: contact as string,
-  email: `contact@${(name as string).split(" ")[0].toLowerCase()}.com`,
+  email: `contact@${(name as string).split(" ")[0]!.toLowerCase()}.com`,
   categories: categories as string[],
   orders: int(4, 28),
   amount: int(900, 7400) * 1000,
@@ -229,7 +230,7 @@ export const stockMoves: StockMove[] = Array.from({ length: 48 }, (_, i) => {
     qty: p.kind === "moto" ? int(1, 20) : int(10, 120),
     from: type === "Transfert revendeur" ? "Stock central" : type === "Réception fournisseur" ? "Fournisseur" : "Atelier",
     to: type === "Transfert revendeur" ? dealer.name : "Stock central",
-    dealerId: type === "Transfert revendeur" ? dealer.id : undefined,
+    ...(type === "Transfert revendeur" ? { dealerId: dealer.id } : {}),
     ref: `REF-${8000 + i}`,
   };
 }).sort((a, b) => b.date.localeCompare(a.date));
@@ -247,7 +248,7 @@ export const imports: ImportFile[] = Array.from({ length: 10 }, (_, i) => {
     "Contrôle",
     "Disponible",
   ];
-  const status = statuses[i % statuses.length];
+  const status = at(statuses, i);
   const lines = Array.from({ length: int(2, 4) }, () => {
     const p = pick(motos);
     return { productId: p.id, qty: int(15, 90), unitPrice: Math.round(p.priceDealer * 0.62) };
@@ -278,7 +279,7 @@ export const customers: Customer[] = dealers.flatMap((d, di) =>
     return {
       id: `C${di + 1}-${i + 1}`,
       dealerId: d.id,
-      name: `${firstNames[(i + di) % firstNames.length]} ${lastNames[(i * 3 + di) % lastNames.length]}`,
+      name: `${at(firstNames, i + di)} ${at(lastNames, i * 3 + di)}`,
       phone: `06${int(10, 99)} ${int(10, 99)} ${int(10, 99)} ${int(10, 99)}`,
       city: d.city,
       productId: p.id,
@@ -302,8 +303,8 @@ const subjects = [
 ];
 
 export const tickets: Ticket[] = Array.from({ length: 16 }, (_, i) => {
-  const dealer = dealers[i % dealers.length];
-  const customer = customers.filter((c) => c.dealerId === dealer.id)[i % 20];
+  const dealer = at(dealers, i);
+  const customer = at(customers.filter((c) => c.dealerId === dealer.id), i);
   const status = pick(["Nouveau", "Diagnostic", "En analyse", "Pièce requise", "En traitement", "Résolu"] as const);
   return {
     id: `SAV-${3001 + i}`,
@@ -311,7 +312,8 @@ export const tickets: Ticket[] = Array.from({ length: 16 }, (_, i) => {
     customerId: customer.id,
     productId: customer.productId,
     serial: customer.serial,
-    subject: subjects[i % subjects.length],
+    subject: at(subjects, i),
+
     priority: pick(["Basse", "Normale", "Haute", "Critique"] as const),
     status,
     date: daysAgo(int(0, 45)),
@@ -327,7 +329,7 @@ export const tickets: Ticket[] = Array.from({ length: 16 }, (_, i) => {
 });
 
 export const invoices: Invoice[] = Array.from({ length: 30 }, (_, i) => {
-  const order = dealerOrders[i % dealerOrders.length];
+  const order = at(dealerOrders, i);
   const amount = order.lines.reduce((s, l) => s + l.qty * l.unitPrice, 0);
   const date = daysAgo(int(2, 90));
   const due = new Date(date);
