@@ -10,33 +10,239 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RevendeurRouteImport } from './routes/revendeur'
+import { Route as SinophraRouteImport } from './routes/sinophra'
+import { Route as SinophraIndexRouteImport } from './routes/sinophra.index'
+import { Route as SinophraAgentsRouteImport } from './routes/sinophra.agents'
+import { Route as SinophraAnalyticsRouteImport } from './routes/sinophra.analytics'
+import { Route as SinophraCatalogueRouteImport } from './routes/sinophra.catalogue'
+import { Route as SinophraCommandesRouteImport } from './routes/sinophra.commandes'
+import { Route as SinophraConfigurationRouteImport } from './routes/sinophra.configuration'
+import { Route as SinophraFacturationRouteImport } from './routes/sinophra.facturation'
+import { Route as SinophraFournisseursRouteImport } from './routes/sinophra.fournisseurs'
+import { Route as SinophraImportationsRouteImport } from './routes/sinophra.importations'
+import { Route as SinophraPiecesRouteImport } from './routes/sinophra.pieces'
+import { Route as SinophraRevendeursRouteImport } from './routes/sinophra.revendeurs'
+import { Route as SinophraSavRouteImport } from './routes/sinophra.sav'
+import { Route as SinophraStockRouteImport } from './routes/sinophra.stock'
+import { Route as SinophraRevendeursIndexRouteImport } from './routes/sinophra.revendeurs.index'
+import { Route as SinophraRevendeursIdRouteImport } from './routes/sinophra.revendeurs.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RevendeurRoute = RevendeurRouteImport.update({
+  id: '/revendeur',
+  path: '/revendeur',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SinophraRoute = SinophraRouteImport.update({
+  id: '/sinophra',
+  path: '/sinophra',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SinophraIndexRoute = SinophraIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SinophraRoute,
+} as any)
+const SinophraAgentsRoute = SinophraAgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
+  getParentRoute: () => SinophraRoute,
+} as any)
+const SinophraAnalyticsRoute = SinophraAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => SinophraRoute,
+} as any)
+const SinophraCatalogueRoute = SinophraCatalogueRouteImport.update({
+  id: '/catalogue',
+  path: '/catalogue',
+  getParentRoute: () => SinophraRoute,
+} as any)
+const SinophraCommandesRoute = SinophraCommandesRouteImport.update({
+  id: '/commandes',
+  path: '/commandes',
+  getParentRoute: () => SinophraRoute,
+} as any)
+const SinophraConfigurationRoute = SinophraConfigurationRouteImport.update({
+  id: '/configuration',
+  path: '/configuration',
+  getParentRoute: () => SinophraRoute,
+} as any)
+const SinophraFacturationRoute = SinophraFacturationRouteImport.update({
+  id: '/facturation',
+  path: '/facturation',
+  getParentRoute: () => SinophraRoute,
+} as any)
+const SinophraFournisseursRoute = SinophraFournisseursRouteImport.update({
+  id: '/fournisseurs',
+  path: '/fournisseurs',
+  getParentRoute: () => SinophraRoute,
+} as any)
+const SinophraImportationsRoute = SinophraImportationsRouteImport.update({
+  id: '/importations',
+  path: '/importations',
+  getParentRoute: () => SinophraRoute,
+} as any)
+const SinophraPiecesRoute = SinophraPiecesRouteImport.update({
+  id: '/pieces',
+  path: '/pieces',
+  getParentRoute: () => SinophraRoute,
+} as any)
+const SinophraRevendeursRoute = SinophraRevendeursRouteImport.update({
+  id: '/revendeurs',
+  path: '/revendeurs',
+  getParentRoute: () => SinophraRoute,
+} as any)
+const SinophraSavRoute = SinophraSavRouteImport.update({
+  id: '/sav',
+  path: '/sav',
+  getParentRoute: () => SinophraRoute,
+} as any)
+const SinophraStockRoute = SinophraStockRouteImport.update({
+  id: '/stock',
+  path: '/stock',
+  getParentRoute: () => SinophraRoute,
+} as any)
+const SinophraRevendeursIndexRoute = SinophraRevendeursIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SinophraRevendeursRoute,
+} as any)
+const SinophraRevendeursIdRoute = SinophraRevendeursIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => SinophraRevendeursRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/revendeur': typeof RevendeurRoute
+  '/sinophra': typeof SinophraRouteWithChildren
+  '/sinophra/agents': typeof SinophraAgentsRoute
+  '/sinophra/analytics': typeof SinophraAnalyticsRoute
+  '/sinophra/catalogue': typeof SinophraCatalogueRoute
+  '/sinophra/commandes': typeof SinophraCommandesRoute
+  '/sinophra/configuration': typeof SinophraConfigurationRoute
+  '/sinophra/facturation': typeof SinophraFacturationRoute
+  '/sinophra/fournisseurs': typeof SinophraFournisseursRoute
+  '/sinophra/importations': typeof SinophraImportationsRoute
+  '/sinophra/pieces': typeof SinophraPiecesRoute
+  '/sinophra/revendeurs': typeof SinophraRevendeursRouteWithChildren
+  '/sinophra/sav': typeof SinophraSavRoute
+  '/sinophra/stock': typeof SinophraStockRoute
+  '/sinophra/': typeof SinophraIndexRoute
+  '/sinophra/revendeurs/$id': typeof SinophraRevendeursIdRoute
+  '/sinophra/revendeurs/': typeof SinophraRevendeursIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/revendeur': typeof RevendeurRoute
+  '/sinophra/agents': typeof SinophraAgentsRoute
+  '/sinophra/analytics': typeof SinophraAnalyticsRoute
+  '/sinophra/catalogue': typeof SinophraCatalogueRoute
+  '/sinophra/commandes': typeof SinophraCommandesRoute
+  '/sinophra/configuration': typeof SinophraConfigurationRoute
+  '/sinophra/facturation': typeof SinophraFacturationRoute
+  '/sinophra/fournisseurs': typeof SinophraFournisseursRoute
+  '/sinophra/importations': typeof SinophraImportationsRoute
+  '/sinophra/pieces': typeof SinophraPiecesRoute
+  '/sinophra/sav': typeof SinophraSavRoute
+  '/sinophra/stock': typeof SinophraStockRoute
+  '/sinophra': typeof SinophraIndexRoute
+  '/sinophra/revendeurs/$id': typeof SinophraRevendeursIdRoute
+  '/sinophra/revendeurs': typeof SinophraRevendeursIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/revendeur': typeof RevendeurRoute
+  '/sinophra': typeof SinophraRouteWithChildren
+  '/sinophra/agents': typeof SinophraAgentsRoute
+  '/sinophra/analytics': typeof SinophraAnalyticsRoute
+  '/sinophra/catalogue': typeof SinophraCatalogueRoute
+  '/sinophra/commandes': typeof SinophraCommandesRoute
+  '/sinophra/configuration': typeof SinophraConfigurationRoute
+  '/sinophra/facturation': typeof SinophraFacturationRoute
+  '/sinophra/fournisseurs': typeof SinophraFournisseursRoute
+  '/sinophra/importations': typeof SinophraImportationsRoute
+  '/sinophra/pieces': typeof SinophraPiecesRoute
+  '/sinophra/revendeurs': typeof SinophraRevendeursRouteWithChildren
+  '/sinophra/sav': typeof SinophraSavRoute
+  '/sinophra/stock': typeof SinophraStockRoute
+  '/sinophra/': typeof SinophraIndexRoute
+  '/sinophra/revendeurs/$id': typeof SinophraRevendeursIdRoute
+  '/sinophra/revendeurs/': typeof SinophraRevendeursIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/revendeur'
+    | '/sinophra'
+    | '/sinophra/agents'
+    | '/sinophra/analytics'
+    | '/sinophra/catalogue'
+    | '/sinophra/commandes'
+    | '/sinophra/configuration'
+    | '/sinophra/facturation'
+    | '/sinophra/fournisseurs'
+    | '/sinophra/importations'
+    | '/sinophra/pieces'
+    | '/sinophra/revendeurs'
+    | '/sinophra/sav'
+    | '/sinophra/stock'
+    | '/sinophra/'
+    | '/sinophra/revendeurs/$id'
+    | '/sinophra/revendeurs/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/revendeur'
+    | '/sinophra/agents'
+    | '/sinophra/analytics'
+    | '/sinophra/catalogue'
+    | '/sinophra/commandes'
+    | '/sinophra/configuration'
+    | '/sinophra/facturation'
+    | '/sinophra/fournisseurs'
+    | '/sinophra/importations'
+    | '/sinophra/pieces'
+    | '/sinophra/sav'
+    | '/sinophra/stock'
+    | '/sinophra'
+    | '/sinophra/revendeurs/$id'
+    | '/sinophra/revendeurs'
+  id:
+    | '__root__'
+    | '/'
+    | '/revendeur'
+    | '/sinophra'
+    | '/sinophra/agents'
+    | '/sinophra/analytics'
+    | '/sinophra/catalogue'
+    | '/sinophra/commandes'
+    | '/sinophra/configuration'
+    | '/sinophra/facturation'
+    | '/sinophra/fournisseurs'
+    | '/sinophra/importations'
+    | '/sinophra/pieces'
+    | '/sinophra/revendeurs'
+    | '/sinophra/sav'
+    | '/sinophra/stock'
+    | '/sinophra/'
+    | '/sinophra/revendeurs/$id'
+    | '/sinophra/revendeurs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  RevendeurRoute: typeof RevendeurRoute
+  SinophraRoute: typeof SinophraRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +254,181 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/revendeur': {
+      id: '/revendeur'
+      path: '/revendeur'
+      fullPath: '/revendeur'
+      preLoaderRoute: typeof RevendeurRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sinophra': {
+      id: '/sinophra'
+      path: '/sinophra'
+      fullPath: '/sinophra'
+      preLoaderRoute: typeof SinophraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sinophra/': {
+      id: '/sinophra/'
+      path: '/'
+      fullPath: '/sinophra/'
+      preLoaderRoute: typeof SinophraIndexRouteImport
+      parentRoute: typeof SinophraRoute
+    }
+    '/sinophra/agents': {
+      id: '/sinophra/agents'
+      path: '/agents'
+      fullPath: '/sinophra/agents'
+      preLoaderRoute: typeof SinophraAgentsRouteImport
+      parentRoute: typeof SinophraRoute
+    }
+    '/sinophra/analytics': {
+      id: '/sinophra/analytics'
+      path: '/analytics'
+      fullPath: '/sinophra/analytics'
+      preLoaderRoute: typeof SinophraAnalyticsRouteImport
+      parentRoute: typeof SinophraRoute
+    }
+    '/sinophra/catalogue': {
+      id: '/sinophra/catalogue'
+      path: '/catalogue'
+      fullPath: '/sinophra/catalogue'
+      preLoaderRoute: typeof SinophraCatalogueRouteImport
+      parentRoute: typeof SinophraRoute
+    }
+    '/sinophra/commandes': {
+      id: '/sinophra/commandes'
+      path: '/commandes'
+      fullPath: '/sinophra/commandes'
+      preLoaderRoute: typeof SinophraCommandesRouteImport
+      parentRoute: typeof SinophraRoute
+    }
+    '/sinophra/configuration': {
+      id: '/sinophra/configuration'
+      path: '/configuration'
+      fullPath: '/sinophra/configuration'
+      preLoaderRoute: typeof SinophraConfigurationRouteImport
+      parentRoute: typeof SinophraRoute
+    }
+    '/sinophra/facturation': {
+      id: '/sinophra/facturation'
+      path: '/facturation'
+      fullPath: '/sinophra/facturation'
+      preLoaderRoute: typeof SinophraFacturationRouteImport
+      parentRoute: typeof SinophraRoute
+    }
+    '/sinophra/fournisseurs': {
+      id: '/sinophra/fournisseurs'
+      path: '/fournisseurs'
+      fullPath: '/sinophra/fournisseurs'
+      preLoaderRoute: typeof SinophraFournisseursRouteImport
+      parentRoute: typeof SinophraRoute
+    }
+    '/sinophra/importations': {
+      id: '/sinophra/importations'
+      path: '/importations'
+      fullPath: '/sinophra/importations'
+      preLoaderRoute: typeof SinophraImportationsRouteImport
+      parentRoute: typeof SinophraRoute
+    }
+    '/sinophra/pieces': {
+      id: '/sinophra/pieces'
+      path: '/pieces'
+      fullPath: '/sinophra/pieces'
+      preLoaderRoute: typeof SinophraPiecesRouteImport
+      parentRoute: typeof SinophraRoute
+    }
+    '/sinophra/revendeurs': {
+      id: '/sinophra/revendeurs'
+      path: '/revendeurs'
+      fullPath: '/sinophra/revendeurs'
+      preLoaderRoute: typeof SinophraRevendeursRouteImport
+      parentRoute: typeof SinophraRoute
+    }
+    '/sinophra/sav': {
+      id: '/sinophra/sav'
+      path: '/sav'
+      fullPath: '/sinophra/sav'
+      preLoaderRoute: typeof SinophraSavRouteImport
+      parentRoute: typeof SinophraRoute
+    }
+    '/sinophra/stock': {
+      id: '/sinophra/stock'
+      path: '/stock'
+      fullPath: '/sinophra/stock'
+      preLoaderRoute: typeof SinophraStockRouteImport
+      parentRoute: typeof SinophraRoute
+    }
+    '/sinophra/revendeurs/': {
+      id: '/sinophra/revendeurs/'
+      path: '/'
+      fullPath: '/sinophra/revendeurs/'
+      preLoaderRoute: typeof SinophraRevendeursIndexRouteImport
+      parentRoute: typeof SinophraRevendeursRoute
+    }
+    '/sinophra/revendeurs/$id': {
+      id: '/sinophra/revendeurs/$id'
+      path: '/$id'
+      fullPath: '/sinophra/revendeurs/$id'
+      preLoaderRoute: typeof SinophraRevendeursIdRouteImport
+      parentRoute: typeof SinophraRevendeursRoute
+    }
   }
 }
 
+interface SinophraRevendeursRouteChildren {
+  SinophraRevendeursIdRoute: typeof SinophraRevendeursIdRoute
+  SinophraRevendeursIndexRoute: typeof SinophraRevendeursIndexRoute
+}
+
+const SinophraRevendeursRouteChildren: SinophraRevendeursRouteChildren = {
+  SinophraRevendeursIdRoute: SinophraRevendeursIdRoute,
+  SinophraRevendeursIndexRoute: SinophraRevendeursIndexRoute,
+}
+
+const SinophraRevendeursRouteWithChildren =
+  SinophraRevendeursRoute._addFileChildren(SinophraRevendeursRouteChildren)
+
+interface SinophraRouteChildren {
+  SinophraAgentsRoute: typeof SinophraAgentsRoute
+  SinophraAnalyticsRoute: typeof SinophraAnalyticsRoute
+  SinophraCatalogueRoute: typeof SinophraCatalogueRoute
+  SinophraCommandesRoute: typeof SinophraCommandesRoute
+  SinophraConfigurationRoute: typeof SinophraConfigurationRoute
+  SinophraFacturationRoute: typeof SinophraFacturationRoute
+  SinophraFournisseursRoute: typeof SinophraFournisseursRoute
+  SinophraImportationsRoute: typeof SinophraImportationsRoute
+  SinophraPiecesRoute: typeof SinophraPiecesRoute
+  SinophraRevendeursRoute: typeof SinophraRevendeursRouteWithChildren
+  SinophraSavRoute: typeof SinophraSavRoute
+  SinophraStockRoute: typeof SinophraStockRoute
+  SinophraIndexRoute: typeof SinophraIndexRoute
+}
+
+const SinophraRouteChildren: SinophraRouteChildren = {
+  SinophraAgentsRoute: SinophraAgentsRoute,
+  SinophraAnalyticsRoute: SinophraAnalyticsRoute,
+  SinophraCatalogueRoute: SinophraCatalogueRoute,
+  SinophraCommandesRoute: SinophraCommandesRoute,
+  SinophraConfigurationRoute: SinophraConfigurationRoute,
+  SinophraFacturationRoute: SinophraFacturationRoute,
+  SinophraFournisseursRoute: SinophraFournisseursRoute,
+  SinophraImportationsRoute: SinophraImportationsRoute,
+  SinophraPiecesRoute: SinophraPiecesRoute,
+  SinophraRevendeursRoute: SinophraRevendeursRouteWithChildren,
+  SinophraSavRoute: SinophraSavRoute,
+  SinophraStockRoute: SinophraStockRoute,
+  SinophraIndexRoute: SinophraIndexRoute,
+}
+
+const SinophraRouteWithChildren = SinophraRoute._addFileChildren(
+  SinophraRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  RevendeurRoute: RevendeurRoute,
+  SinophraRoute: SinophraRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
