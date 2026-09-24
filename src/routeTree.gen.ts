@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RevendeurRouteImport } from './routes/revendeur'
+import { Route as SinophraRouteImport } from './routes/sinophra'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RevendeurRoute = RevendeurRouteImport.update({
+  id: '/revendeur',
+  path: '/revendeur',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SinophraRoute = SinophraRouteImport.update({
+  id: '/sinophra',
+  path: '/sinophra',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/revendeur': typeof RevendeurRoute
+  '/sinophra': typeof SinophraRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/revendeur': typeof RevendeurRoute
+  '/sinophra': typeof SinophraRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/revendeur': typeof RevendeurRoute
+  '/sinophra': typeof SinophraRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/revendeur' | '/sinophra'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/revendeur' | '/sinophra'
+  id: '__root__' | '/' | '/revendeur' | '/sinophra'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  RevendeurRoute: typeof RevendeurRoute
+  SinophraRoute: typeof SinophraRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/revendeur': {
+      id: '/revendeur'
+      path: '/revendeur'
+      fullPath: '/revendeur'
+      preLoaderRoute: typeof RevendeurRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sinophra': {
+      id: '/sinophra'
+      path: '/sinophra'
+      fullPath: '/sinophra'
+      preLoaderRoute: typeof SinophraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  RevendeurRoute: RevendeurRoute,
+  SinophraRoute: SinophraRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
