@@ -14,6 +14,8 @@ import { Route as RevendeurRouteImport } from './routes/revendeur'
 import { Route as SinophraRouteImport } from './routes/sinophra'
 import { Route as SinophraIndexRouteImport } from './routes/sinophra.index'
 import { Route as SinophraCatalogueRouteImport } from './routes/sinophra.catalogue'
+import { Route as SinophraFournisseursRouteImport } from './routes/sinophra.fournisseurs'
+import { Route as SinophraImportationsRouteImport } from './routes/sinophra.importations'
 import { Route as SinophraPiecesRouteImport } from './routes/sinophra.pieces'
 import { Route as SinophraStockRouteImport } from './routes/sinophra.stock'
 
@@ -42,6 +44,16 @@ const SinophraCatalogueRoute = SinophraCatalogueRouteImport.update({
   path: '/catalogue',
   getParentRoute: () => SinophraRoute,
 } as any)
+const SinophraFournisseursRoute = SinophraFournisseursRouteImport.update({
+  id: '/fournisseurs',
+  path: '/fournisseurs',
+  getParentRoute: () => SinophraRoute,
+} as any)
+const SinophraImportationsRoute = SinophraImportationsRouteImport.update({
+  id: '/importations',
+  path: '/importations',
+  getParentRoute: () => SinophraRoute,
+} as any)
 const SinophraPiecesRoute = SinophraPiecesRouteImport.update({
   id: '/pieces',
   path: '/pieces',
@@ -58,6 +70,8 @@ export interface FileRoutesByFullPath {
   '/revendeur': typeof RevendeurRoute
   '/sinophra': typeof SinophraRouteWithChildren
   '/sinophra/catalogue': typeof SinophraCatalogueRoute
+  '/sinophra/fournisseurs': typeof SinophraFournisseursRoute
+  '/sinophra/importations': typeof SinophraImportationsRoute
   '/sinophra/pieces': typeof SinophraPiecesRoute
   '/sinophra/stock': typeof SinophraStockRoute
   '/sinophra/': typeof SinophraIndexRoute
@@ -66,6 +80,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/revendeur': typeof RevendeurRoute
   '/sinophra/catalogue': typeof SinophraCatalogueRoute
+  '/sinophra/fournisseurs': typeof SinophraFournisseursRoute
+  '/sinophra/importations': typeof SinophraImportationsRoute
   '/sinophra/pieces': typeof SinophraPiecesRoute
   '/sinophra/stock': typeof SinophraStockRoute
   '/sinophra': typeof SinophraIndexRoute
@@ -76,6 +92,8 @@ export interface FileRoutesById {
   '/revendeur': typeof RevendeurRoute
   '/sinophra': typeof SinophraRouteWithChildren
   '/sinophra/catalogue': typeof SinophraCatalogueRoute
+  '/sinophra/fournisseurs': typeof SinophraFournisseursRoute
+  '/sinophra/importations': typeof SinophraImportationsRoute
   '/sinophra/pieces': typeof SinophraPiecesRoute
   '/sinophra/stock': typeof SinophraStockRoute
   '/sinophra/': typeof SinophraIndexRoute
@@ -87,6 +105,8 @@ export interface FileRouteTypes {
     | '/revendeur'
     | '/sinophra'
     | '/sinophra/catalogue'
+    | '/sinophra/fournisseurs'
+    | '/sinophra/importations'
     | '/sinophra/pieces'
     | '/sinophra/stock'
     | '/sinophra/'
@@ -95,6 +115,8 @@ export interface FileRouteTypes {
     | '/'
     | '/revendeur'
     | '/sinophra/catalogue'
+    | '/sinophra/fournisseurs'
+    | '/sinophra/importations'
     | '/sinophra/pieces'
     | '/sinophra/stock'
     | '/sinophra'
@@ -104,6 +126,8 @@ export interface FileRouteTypes {
     | '/revendeur'
     | '/sinophra'
     | '/sinophra/catalogue'
+    | '/sinophra/fournisseurs'
+    | '/sinophra/importations'
     | '/sinophra/pieces'
     | '/sinophra/stock'
     | '/sinophra/'
@@ -152,6 +176,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SinophraCatalogueRouteImport
       parentRoute: typeof SinophraRoute
     }
+    '/sinophra/fournisseurs': {
+      id: '/sinophra/fournisseurs'
+      path: '/fournisseurs'
+      fullPath: '/sinophra/fournisseurs'
+      preLoaderRoute: typeof SinophraFournisseursRouteImport
+      parentRoute: typeof SinophraRoute
+    }
+    '/sinophra/importations': {
+      id: '/sinophra/importations'
+      path: '/importations'
+      fullPath: '/sinophra/importations'
+      preLoaderRoute: typeof SinophraImportationsRouteImport
+      parentRoute: typeof SinophraRoute
+    }
     '/sinophra/pieces': {
       id: '/sinophra/pieces'
       path: '/pieces'
@@ -171,6 +209,8 @@ declare module '@tanstack/react-router' {
 
 interface SinophraRouteChildren {
   SinophraCatalogueRoute: typeof SinophraCatalogueRoute
+  SinophraFournisseursRoute: typeof SinophraFournisseursRoute
+  SinophraImportationsRoute: typeof SinophraImportationsRoute
   SinophraPiecesRoute: typeof SinophraPiecesRoute
   SinophraStockRoute: typeof SinophraStockRoute
   SinophraIndexRoute: typeof SinophraIndexRoute
@@ -178,6 +218,8 @@ interface SinophraRouteChildren {
 
 const SinophraRouteChildren: SinophraRouteChildren = {
   SinophraCatalogueRoute: SinophraCatalogueRoute,
+  SinophraFournisseursRoute: SinophraFournisseursRoute,
+  SinophraImportationsRoute: SinophraImportationsRoute,
   SinophraPiecesRoute: SinophraPiecesRoute,
   SinophraStockRoute: SinophraStockRoute,
   SinophraIndexRoute: SinophraIndexRoute,

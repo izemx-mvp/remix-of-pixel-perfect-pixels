@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { FileText, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { DataTable, Info as _Info, PageHeader, StatusBadge, Timeline, type Column } from "@/components/ui-kit";
+import { DataTable, PageHeader, StatusBadge, Timeline, type Column } from "@/components/ui-kit";
 import { Info } from "@/components/Catalogue";
 import { mad, num, shortDate } from "@/lib/format";
 import { useStore } from "@/lib/store";
