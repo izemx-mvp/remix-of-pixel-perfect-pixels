@@ -20,7 +20,9 @@ const rnd = () => {
   seed = (seed * 1103515245 + 12345) % 2147483648;
   return seed / 2147483648;
 };
-const pick = <T,>(arr: T[]) => arr[Math.floor(rnd() * arr.length)];
+const pick = <T,>(arr: T[]) => arr[Math.floor(rnd() * arr.length)] as T;
+const at = <T,>(arr: T[], i: number) => arr[i % arr.length] as T;
+
 const int = (min: number, max: number) => min + Math.floor(rnd() * (max - min + 1));
 
 const motoDefs: [string, string, string, number, number, string][] = [
