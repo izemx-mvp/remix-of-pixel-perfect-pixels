@@ -84,7 +84,8 @@ function Dashboard() {
     { text: "Casablanca Centre affiche une forte rotation du modèle CR50", to: "/sinophra/revendeurs" },
     { text: `${inTransit} unités sont actuellement en transit`, to: "/sinophra/importations" },
     { text: "8 produits ont un stock dormant supérieur à 90 jours", to: "/sinophra/analytics" },
-  ];
+  ] as const;
+
 
   const COLORS = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"];
 
