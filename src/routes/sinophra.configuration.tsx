@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader, SectionCard, StatusBadge } from "@/components/ui-kit";
-import { AiConfigPanel } from "@/components/AdminPanels";
 
 export const Route = createFileRoute("/sinophra/configuration")({
   head: () => ({
@@ -24,13 +23,12 @@ export const Route = createFileRoute("/sinophra/configuration")({
 function ConfigPage() {
   return (
     <>
-      <PageHeader title="Configuration" subtitle="Entreprise, seuils, IA & base de connaissance, connecteurs." />
+      <PageHeader title="Configuration" subtitle="Entreprise, seuils, connecteurs." />
 
       <Tabs defaultValue="entreprise">
         <TabsList className="flex-wrap">
           <TabsTrigger value="entreprise">Entreprise</TabsTrigger>
           <TabsTrigger value="seuils">Seuils & notifications</TabsTrigger>
-          <TabsTrigger value="ia">Configuration IA & Base de connaissance</TabsTrigger>
           <TabsTrigger value="connecteurs">Connecteurs</TabsTrigger>
         </TabsList>
 
@@ -61,10 +59,6 @@ function ConfigPage() {
               ))}
             </div>
           </SectionCard>
-        </TabsContent>
-
-        <TabsContent value="ia" className="pt-4">
-          <AiConfigPanel />
         </TabsContent>
 
         <TabsContent value="connecteurs" className="pt-4">
