@@ -49,7 +49,7 @@ function DealersPage() {
         <KpiCard label="Stock réseau" value={num(dealerStock.reduce((s, l) => s + l.available, 0))} icon={Boxes} />
         <KpiCard
           label="Commandes en attente"
-          value={orders.filter((o) => o.status === "Demande envoyée").length}
+          value={orders.filter((o) => o.status === "Commande reçue").length}
           icon={ShoppingCart}
           tone="warning"
         />

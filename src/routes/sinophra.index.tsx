@@ -99,7 +99,7 @@ function Dashboard() {
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <KpiCard label="CA du mois" value={mad(monthRevenue)} hint="+12,4 % vs août" icon={TrendingUp} tone="accent" />
-        <KpiCard label="Commandes revendeurs" value={orders.length} hint={`${orders.filter((o) => o.status === "Demande envoyée").length} en attente`} icon={ShoppingCart} onClick={() => navigate({ to: "/sinophra/commandes" })} />
+        <KpiCard label="Commandes revendeurs" value={orders.length} hint={`${orders.filter((o) => o.status === "Commande reçue").length} en attente`} icon={ShoppingCart} onClick={() => navigate({ to: "/sinophra/commandes" })} />
         <KpiCard label="Revendeurs actifs" value={dealers.length} hint="6 villes couvertes" icon={Store} onClick={() => navigate({ to: "/sinophra/revendeurs" })} />
         <KpiCard label="Motos en stock" value={num(motos.reduce((s, p) => s + p.centralStock, 0))} icon={Bike} onClick={() => navigate({ to: "/sinophra/stock" })} />
         <KpiCard label="Pièces en stock" value={num(pieces.reduce((s, p) => s + p.centralStock, 0))} icon={Package} onClick={() => navigate({ to: "/sinophra/pieces" })} />

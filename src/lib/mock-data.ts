@@ -147,6 +147,8 @@ export const suppliers: Supplier[] = [
   ["S6", "Motul Distribution", "France", "Claire Dubois", ["Lubrifiants"]],
   ["S7", "NGK Parts", "Espagne", "Pablo Ruiz", ["Moteur", "Filtration"]],
   ["S8", "Shineray Group", "Chine", "Liu Yang", ["Motos", "Pièces"]],
+  ["S9", "Guangzhou Moto Manufacturing", "Chine", "Huang Bo", ["Motos", "Cross", "Pièces", "Batteries"]],
+  ["S10", "Atlas Parts Maroc", "Maroc", "Omar Filali", ["Batteries", "Freinage", "Pneus", "Accessoires", "Casques", "Transmission", "Filtration", "Pièces"]],
 ].map(([id, name, country, contact, categories]) => ({
   id: id as string,
   name: name as string,
@@ -185,7 +187,7 @@ export const dealerStock: DealerStockLine[] = dealers.flatMap((d) => [
 ]);
 
 const orderStatuses: OrderStatus[] = [
-  "Demande envoyée",
+  "Commande reçue",
   "Validée",
   "Préparation",
   "Expédiée",
@@ -195,7 +197,7 @@ const orderStatuses: OrderStatus[] = [
 
 export const dealerOrders: DealerOrder[] = Array.from({ length: 26 }, (_, i) => {
   const dealer = pick(dealers);
-  const status = i < 4 ? "Demande envoyée" : pick(orderStatuses);
+  const status = i < 4 ? "Commande reçue" : pick(orderStatuses);
   const lines = Array.from({ length: int(1, 4) }, () => {
     const p = pick(products);
     return { productId: p.id, qty: p.kind === "moto" ? int(1, 8) : int(5, 40), unitPrice: p.priceDealer };
@@ -208,7 +210,7 @@ export const dealerOrders: DealerOrder[] = Array.from({ length: 26 }, (_, i) => 
     lines,
     status,
     expectedDelivery: daysAhead(int(-20, 18)),
-    history: [{ status: "Demande envoyée", date }],
+    history: [{ status: "Commande reçue", date }],
   };
 });
 
@@ -263,6 +265,7 @@ export const imports: ImportFile[] = Array.from({ length: 10 }, (_, i) => {
     status,
     eta: daysAhead(int(-30, 45)),
     semiAssembled: i % 2 === 0,
+    mode: "Importation" as const,
     timeline: [{ status: "Commandé", date: orderDate }],
   };
 });
@@ -318,6 +321,8 @@ export const tickets: Ticket[] = Array.from({ length: 16 }, (_, i) => {
     status,
     date: daysAgo(int(0, 45)),
     escalated: i % 3 === 0,
+    type: at(["SAV", "Garantie", "Pièce", "Produit", "Livraison", "Facturation", "SAV", "Autre"] as const, i),
+    assignee: at(["Sofia Kabbaj", "Imane Tazi", "Mehdi Naciri"], i),
     warranty: rnd() > 0.3,
     parts: i % 2 === 0 ? ["Batterie BTX7"] : [],
     messages: [
@@ -385,3 +390,51 @@ export const salesSeries = [
   ca: 2200000 + i * 210000 + int(-180000, 240000),
   commandes: 38 + i * 4 + int(-6, 9),
 }));
+
+/* ---- Demo scenario overrides (keep story coherent) ---- */
+const setStock = (name: string, stock: number, transit = 0) => {
+  const p = products.find((x) => x.name === name);
+  if (p) {
+    p.centralStock = stock;
+    p.inTransit = transit;
+  }
+};
+setStock("CR50", 6);
+setStock("Batterie BTX7", 4);
+setStock("Plaquettes avant CR50", 22);
+setStock("Pneu cross 110/100", 0);
+setStock("V10", 48);
+const rif = dealerStock.find((l) => l.dealerId === "D4" && l.productId === "M1");
+if (rif) rif.available = 2;
+dealers[0]!.monthRevenue = 420000;
+dealers[3]!.monthRevenue = 198000;
+const s10 = suppliers.find((s) => s.id === "S10")!;
+Object.assign(s10, { avgDelay: 4, onTimeRate: 94, incidents: 0, orders: 22 });
+const s9 = suppliers.find((s) => s.id === "S9")!;
+Object.assign(s9, { avgDelay: 32, onTimeRate: 96, incidents: 1, orders: 18 });
+imports.push(
+  {
+    id: "APP-202601",
+    supplierId: "S10",
+    orderDate: daysAgo(3),
+    origin: "Casablanca, Maroc",
+    lines: [{ productId: "P7", qty: 30, unitPrice: 310 }],
+    status: "Expédié",
+    eta: daysAhead(2),
+    semiAssembled: false,
+    mode: "Fournisseur",
+    timeline: [{ status: "Commandé", date: daysAgo(3) }],
+  },
+  {
+    id: "APP-202602",
+    supplierId: "S7",
+    orderDate: daysAgo(6),
+    origin: "Espagne",
+    lines: [{ productId: "P17", qty: 200, unitPrice: 30 }],
+    status: "En préparation",
+    eta: daysAhead(9),
+    semiAssembled: false,
+    mode: "Fournisseur",
+    timeline: [{ status: "Commandé", date: daysAgo(6) }],
+  },
+);
