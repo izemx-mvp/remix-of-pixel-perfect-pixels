@@ -82,7 +82,7 @@ function Dashboard() {
   const alerts = [
     { text: "3 modèles risquent une rupture sous 15 jours", to: "/sinophra/catalogue" },
     { text: "Casablanca Centre affiche une forte rotation du modèle CR50", to: "/sinophra/revendeurs" },
-    { text: `${inTransit} unités sont actuellement en transit`, to: "/sinophra/approvisionnement" },
+    { text: `${inTransit} unités sont actuellement en transit`, to: "/sinophra/fournisseurs" },
     { text: "8 produits ont un stock dormant supérieur à 90 jours", to: "/sinophra/analytics" },
   ] as const;
 
@@ -103,7 +103,7 @@ function Dashboard() {
         <KpiCard label="Revendeurs actifs" value={dealers.length} hint="6 villes couvertes" icon={Store} onClick={() => navigate({ to: "/sinophra/revendeurs" })} />
         <KpiCard label="Motos en stock" value={num(motos.reduce((s, p) => s + p.centralStock, 0))} icon={Bike} onClick={() => navigate({ to: "/sinophra/catalogue" })} />
         <KpiCard label="Pièces en stock" value={num(pieces.reduce((s, p) => s + p.centralStock, 0))} icon={Package} onClick={() => navigate({ to: "/sinophra/catalogue" })} />
-        <KpiCard label="Stock en transit" value={num(inTransit)} icon={Ship} tone="warning" onClick={() => navigate({ to: "/sinophra/approvisionnement" })} />
+        <KpiCard label="Stock en transit" value={num(inTransit)} icon={Ship} tone="warning" onClick={() => navigate({ to: "/sinophra/fournisseurs" })} />
         <KpiCard label="Produits en rupture" value={ruptures} icon={Boxes} tone="danger" onClick={() => navigate({ to: "/sinophra/catalogue" })} />
         <KpiCard label="Réclamations ouvertes" value={openTickets} icon={Wrench} tone="warning" onClick={() => navigate({ to: "/sinophra/reclamations" })} />
       </div>

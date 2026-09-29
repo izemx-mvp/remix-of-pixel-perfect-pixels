@@ -22,7 +22,7 @@ const SUGGEST: Record<Ctx, string> = {
 };
 
 function ctxOf(path: string): Ctx {
-  if (/catalogue|approvisionnement/.test(path)) return "stock";
+  if (/catalogue/.test(path)) return "stock";
   if (/fournisseurs/.test(path)) return "fournisseurs";
   if (/revendeurs/.test(path)) return "revendeurs";
   if (/commandes/.test(path)) return "commandes";
@@ -56,7 +56,7 @@ export function ChatBubble() {
       : /réclam|reclam|sav|urgent/.test(t) ? "reclamations" : ctx;
     if (c === "stock") {
       const low = store.products.map((p) => ({ p, i: productInsight(p, store.dealerStock) })).filter((x) => x.i.status === "Stock faible" || x.i.status === "Rupture").sort((a, b) => a.i.coverage - b.i.coverage).slice(0, 4);
-      return { from: "ai", text: `Je recommande de commander cette semaine :\n${low.map((x) => `• ${x.p.name} — stock ${x.p.centralStock}, besoin ${x.i.recommended} u. (couverture ${x.i.coverage} j)`).join("\n")}`, actions: dealerSpace ? [{ label: "Voir produit", to: "/revendeur/catalogue" }, { label: "Créer commande", to: "/revendeur/commandes" }] : [{ label: "Voir produit", to: "/sinophra/catalogue" }, { label: "Créer importation", to: "/sinophra/approvisionnement" }] };
+      return { from: "ai", text: `Je recommande de commander cette semaine :\n${low.map((x) => `• ${x.p.name} — stock ${x.p.centralStock}, besoin ${x.i.recommended} u. (couverture ${x.i.coverage} j)`).join("\n")}`, actions: dealerSpace ? [{ label: "Voir produit", to: "/revendeur/catalogue" }, { label: "Créer commande", to: "/revendeur/commandes" }] : [{ label: "Voir produit", to: "/sinophra/catalogue" }, { label: "Créer importation", to: "/sinophra/fournisseurs" }] };
     }
     if (c === "fournisseurs") {
       const bat = store.suppliers.filter((s) => s.categories.includes("Batteries")).map((s) => ({ s, a: supplierAnalysis(s, store.ratings) })).sort((a, b) => b.a.score - a.a.score);

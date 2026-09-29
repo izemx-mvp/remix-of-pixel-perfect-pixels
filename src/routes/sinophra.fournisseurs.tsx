@@ -20,6 +20,7 @@ import { AiBadge, AiNote, DataTable, PageHeader, ScoreBar, StatusBadge, type Col
 import { Info } from "@/components/Catalogue";
 import { SupplierCompare } from "@/components/SupplierCompare";
 import { SupplyWizard } from "@/components/SupplyWizard";
+import { SupplyBoard } from "@/components/SupplyBoard";
 import { supplierAnalysis } from "@/lib/ai";
 import { mad, num, shortDate } from "@/lib/format";
 import { useStore } from "@/lib/store";
@@ -29,16 +30,29 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/sinophra/fournisseurs")({
   head: () => ({
     meta: [
-      { title: "Fournisseurs — SINOPHRA" },
+      { title: "Fournisseurs & Approvisionnement — SINOPHRA" },
       { name: "description", content: "Performance, évaluations internes et score IA des fournisseurs et importateurs." },
-      { property: "og:title", content: "Fournisseurs — SINOPHRA" },
+      { property: "og:title", content: "Fournisseurs & Approvisionnement — SINOPHRA" },
       { property: "og:description", content: "Analyse, comparaison et recommandation IA des fournisseurs." },
     ],
   }),
-  component: SuppliersPage,
+  component: SuppliersSupplyPage,
 });
 
 const CRITERIA = ["Qualité", "Prix", "Délai", "Communication", "Conformité", "Service", "Fiabilité"];
+
+function SuppliersSupplyPage() {
+  return (
+    <Tabs defaultValue="fournisseurs" className="space-y-4">
+      <TabsList>
+        <TabsTrigger value="fournisseurs">Fournisseurs</TabsTrigger>
+        <TabsTrigger value="appro">Approvisionnements & Importations</TabsTrigger>
+      </TabsList>
+      <TabsContent value="fournisseurs" className="space-y-6"><SuppliersPage /></TabsContent>
+      <TabsContent value="appro" className="space-y-6"><SupplyBoard /></TabsContent>
+    </Tabs>
+  );
+}
 
 function SuppliersPage() {
   const { suppliers, products, imports, ratings } = useStore();

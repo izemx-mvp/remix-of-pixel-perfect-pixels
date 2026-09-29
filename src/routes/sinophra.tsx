@@ -29,8 +29,7 @@ export const Route = createFileRoute("/sinophra")({
 const items: NavItem[] = [
   { label: "Dashboard", to: "/sinophra", icon: LayoutDashboard, exact: true },
   { label: "Catalogue & Stock", to: "/sinophra/catalogue", icon: Boxes },
-  { label: "Approvisionnement", to: "/sinophra/approvisionnement", icon: Ship },
-  { label: "Fournisseurs", to: "/sinophra/fournisseurs", icon: Truck },
+  { label: "Fournisseurs & Appro.", to: "/sinophra/fournisseurs", icon: Truck },
   { label: "Revendeurs", to: "/sinophra/revendeurs", icon: Store },
   { label: "Commandes revendeurs", to: "/sinophra/commandes", icon: ShoppingCart },
   { label: "Facturation", to: "/sinophra/facturation", icon: FileText },

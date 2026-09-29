@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { AlertTriangle, CalendarClock, FileText, PackageSearch, Play, Ship, Truck, Wallet } from "lucide-react";
@@ -13,21 +12,10 @@ import { mad, num, shortDate } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import type { ImportFile, Product } from "@/lib/types";
 
-export const Route = createFileRoute("/sinophra/approvisionnement")({
-  head: () => ({
-    meta: [
-      { title: "Approvisionnement — SINOPHRA" },
-      { name: "description", content: "Importations et commandes fournisseurs pilotées par les besoins de stock et l'IA." },
-      { property: "og:title", content: "Approvisionnement — SINOPHRA" },
-      { property: "og:description", content: "Du besoin de stock à la réception : importation ou fournisseur." },
-    ],
-  }),
-  component: SupplyPage,
-});
 
 const FULL_FLOW = ["Commandé", "En préparation", "Expédié", "En transit", "Arrivé", "Réceptionné", "Assemblage", "Contrôle", "Disponible"];
 
-function SupplyPage() {
+export function SupplyBoard() {
   const { imports, suppliers, products, dealerStock, ratings, advanceImport } = useStore();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [mode, setMode] = useState("all");
