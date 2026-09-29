@@ -13,6 +13,8 @@ import {
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
+import { ChatBubble } from "@/components/ChatBubble";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export interface NavItem {
   label: string;
@@ -79,6 +81,7 @@ export function AppShell({
   );
 
   return (
+    <TooltipProvider delayDuration={150}>
     <div className="flex min-h-screen bg-background">
       <aside className="hidden w-64 shrink-0 flex-col bg-sidebar lg:flex">
         {brand}
@@ -165,8 +168,10 @@ export function AppShell({
           </div>
         </header>
 
-        <main className="flex-1 space-y-6 p-4 sm:p-6">{children}</main>
+        <main className="flex-1 space-y-6 p-4 pb-24 sm:p-6 sm:pb-24">{children}</main>
+        <ChatBubble />
       </div>
     </div>
+    </TooltipProvider>
   );
 }

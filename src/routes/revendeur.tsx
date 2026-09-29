@@ -1,25 +1,14 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import {
-  BarChart3,
-  Bot,
-  Boxes,
-  LayoutDashboard,
-  MessageSquare,
-  Settings,
-  ShoppingBag,
-  ShoppingCart,
-  Users,
-  Wrench,
-} from "lucide-react";
+import { BarChart3, Boxes, FileText, LayoutDashboard, MessagesSquare, Settings, ShoppingCart, UserCog, Users } from "lucide-react";
 import { AppShell, type NavItem } from "@/components/AppShell";
 
 export const Route = createFileRoute("/revendeur")({
   head: () => ({
     meta: [
       { title: "MOTOPARK — Espace revendeur" },
-      { name: "description", content: "Stock, commandes, clients, SAV et agents IA du revendeur Motopark." },
+      { name: "description", content: "Catalogue & stock, commandes, clients, réclamations et factures du revendeur Motopark." },
       { property: "og:title", content: "MOTOPARK — Espace revendeur" },
-      { property: "og:description", content: "Stock, commandes, clients, SAV et agents IA du revendeur Motopark." },
+      { property: "og:description", content: "Espace revendeur Motopark connecté à SINOPHRA." },
     ],
   }),
   component: DealerLayout,
@@ -27,14 +16,13 @@ export const Route = createFileRoute("/revendeur")({
 
 const items: NavItem[] = [
   { label: "Dashboard", to: "/revendeur", icon: LayoutDashboard, exact: true },
-  { label: "Mon stock", to: "/revendeur/stock", icon: Boxes },
-  { label: "Catalogue Motopark", to: "/revendeur/catalogue", icon: ShoppingBag },
+  { label: "Catalogue & Stock", to: "/revendeur/catalogue", icon: Boxes },
   { label: "Mes commandes", to: "/revendeur/commandes", icon: ShoppingCart },
   { label: "Mes clients", to: "/revendeur/clients", icon: Users },
-  { label: "SAV", to: "/revendeur/sav", icon: Wrench },
-  { label: "Conversations", to: "/revendeur/conversations", icon: MessageSquare },
+  { label: "Réclamations & Conversations", to: "/revendeur/reclamations", icon: MessagesSquare },
+  { label: "Factures", to: "/revendeur/factures", icon: FileText },
   { label: "Analytics", to: "/revendeur/analytics", icon: BarChart3 },
-  { label: "Agents IA", to: "/revendeur/agents", icon: Bot },
+  { label: "Utilisateurs", to: "/revendeur/utilisateurs", icon: UserCog },
   { label: "Configuration", to: "/revendeur/configuration", icon: Settings },
 ];
 
