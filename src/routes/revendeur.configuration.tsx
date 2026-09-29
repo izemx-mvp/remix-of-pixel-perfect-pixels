@@ -3,8 +3,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AiConfigPanel } from "@/components/AdminPanels";
 import { PageHeader, SectionCard } from "@/components/ui-kit";
 import { useDealerScope } from "@/lib/store";
 
@@ -12,7 +12,7 @@ export const Route = createFileRoute("/revendeur/configuration")({
   head: () => ({
     meta: [
       { title: "Configuration — MOTOPARK" },
-      { name: "description", content: "Paramètres du point de vente et assistants IA." },
+      { name: "description", content: "Paramètres du point de vente et notifications." },
       { property: "og:title", content: "Configuration — MOTOPARK" },
       { property: "og:description", content: "Configuration de l'espace revendeur." },
     ],
@@ -24,9 +24,9 @@ function DealerConfig() {
   const { dealer } = useDealerScope();
   return (
     <>
-      <PageHeader title="Configuration" subtitle="Point de vente, IA et base de connaissance." />
+      <PageHeader title="Configuration" subtitle="Point de vente, notifications et préférences." />
       <Tabs defaultValue="pdv">
-        <TabsList><TabsTrigger value="pdv">Point de vente</TabsTrigger><TabsTrigger value="ia">Configuration IA & Base de connaissance</TabsTrigger></TabsList>
+        <TabsList><TabsTrigger value="pdv">Point de vente</TabsTrigger><TabsTrigger value="notif">Notifications</TabsTrigger></TabsList>
         <TabsContent value="pdv" className="pt-4">
           <SectionCard title="Informations">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -38,7 +38,18 @@ function DealerConfig() {
             <Button className="mt-4" onClick={() => toast.success("Paramètres enregistrés")}>Enregistrer</Button>
           </SectionCard>
         </TabsContent>
-        <TabsContent value="ia" className="pt-4"><AiConfigPanel /></TabsContent>
+        <TabsContent value="notif" className="pt-4">
+          <SectionCard title="Notifications">
+            <div className="space-y-3">
+              {["Stock faible", "Commande expédiée", "Nouvelle facture", "Réponse à une réclamation"].map((n) => (
+                <div key={n} className="flex items-center justify-between rounded-md border px-3 py-2">
+                  <span className="text-sm">{n}</span>
+                  <Switch defaultChecked onCheckedChange={() => toast.success("Préférence mise à jour")} />
+                </div>
+              ))}
+            </div>
+          </SectionCard>
+        </TabsContent>
       </Tabs>
     </>
   );
