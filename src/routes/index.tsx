@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Bike, Building2, ShieldCheck, Store, Wrench } from "lucide-react";
+import { Bike, ShieldCheck, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -24,17 +24,16 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "Importations, stock, revendeurs, commandes, SAV et analytics — démonstration commerciale.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: LoginPage,
 });
 
 const ROLES: { role: Role; icon: React.ComponentType<{ className?: string }>; desc: string }[] = [
-  { role: "Administrateur SINOPHRA", icon: ShieldCheck, desc: "Accès complet à la plateforme" },
-  { role: "Responsable Stock", icon: Building2, desc: "Stock central, importations" },
-  { role: "Responsable Commercial", icon: Bike, desc: "Réseau, commandes, facturation" },
-  { role: "Responsable SAV", icon: Wrench, desc: "Tickets et garanties réseau" },
-  { role: "Revendeur", icon: Store, desc: "Espace Motopark revendeur" },
+  { role: "Administrateur SINOPHRA", icon: ShieldCheck, desc: "Espace SINOPHRA · Administration" },
+  { role: "Revendeur", icon: Store, desc: "Espace MOTOPARK · Revendeur" },
 ];
 
 function LoginPage() {
@@ -103,7 +102,7 @@ function LoginPage() {
                     <r.icon className="h-4 w-4" />
                   </span>
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{r.role}</p>
+                     <p className="truncate text-sm font-medium">{r.role === "Revendeur" ? "MOTOPARK — Revendeur" : "SINOPHRA — Administration"}</p>
                     <p className="truncate text-xs text-muted-foreground">{r.desc}</p>
                   </div>
                 </CardContent>
