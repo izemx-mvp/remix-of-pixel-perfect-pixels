@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { ArrowUpDown, ChevronLeft, ChevronRight, Download, Search } from "lucide-react";
+import { ArrowUpDown, ChevronLeft, ChevronRight, Download, Search, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -41,7 +41,7 @@ const STATUS_TONE: Record<string, keyof typeof TONES> = {
   "En analyse": "info",
   "Pièce requise": "warning",
   "En traitement": "warning",
-  "Demande envoyée": "accent",
+  "Commande reçue": "accent",
   Validée: "info",
   Préparation: "warning",
   Expédiée: "info",
@@ -57,6 +57,15 @@ const STATUS_TONE: Record<string, keyof typeof TONES> = {
   Inactif: "neutral",
   Suspendu: "danger",
   "En attente": "warning",
+  Prête: "success",
+  Recommandé: "success",
+  Fiable: "info",
+  "À surveiller": "warning",
+  Importation: "info",
+  Fournisseur: "accent",
+  Leader: "accent",
+  "Très rentable": "success",
+  "En progression": "info",
 };
 
 export function StatusBadge({ status, className }: { status: string; className?: string }) {
@@ -349,5 +358,63 @@ export function Timeline({ steps, currentIndex }: { steps: string[]; currentInde
         </li>
       ))}
     </ol>
+  );
+}
+
+/* ---------------- AI indicators ---------------- */
+
+export function AiNote({
+  children,
+  tone = "accent",
+  className,
+  title,
+}: {
+  children: ReactNode;
+  tone?: "accent" | "warning" | "danger" | "success" | "info";
+  className?: string;
+  title?: string;
+}) {
+  const t: Record<string, string> = {
+    accent: "border-primary/25 bg-primary/5",
+    warning: "border-warning/30 bg-warning/8",
+    danger: "border-destructive/30 bg-destructive/8",
+    success: "border-success/30 bg-success/8",
+    info: "border-info/30 bg-info/8",
+  };
+  const ic: Record<string, string> = {
+    accent: "text-primary",
+    warning: "text-warning",
+    danger: "text-destructive",
+    success: "text-success",
+    info: "text-info",
+  };
+  return (
+    <div className={cn("flex gap-2.5 rounded-lg border px-3 py-2.5 text-sm animate-in fade-in-0", t[tone], className)}>
+      <Sparkles className={cn("mt-0.5 h-4 w-4 shrink-0", ic[tone])} />
+      <div className="min-w-0">
+        {title && <p className="mb-0.5 text-xs font-semibold tracking-wide uppercase">{title}</p>}
+        <div className="text-foreground/90">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+export function AiBadge({ label = "IA" }: { label?: string }) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-primary/20 to-primary/5 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-primary uppercase">
+      <Sparkles className="h-3 w-3" /> {label}
+    </span>
+  );
+}
+
+export function ScoreBar({ value }: { value: number }) {
+  const tone = value >= 85 ? "bg-success" : value >= 70 ? "bg-warning" : "bg-destructive";
+  return (
+    <div className="flex items-center gap-2">
+      <div className="h-1.5 w-14 overflow-hidden rounded-full bg-muted">
+        <div className={cn("h-full rounded-full transition-all", tone)} style={{ width: `${value}%` }} />
+      </div>
+      <span className="text-xs font-semibold tabular-nums">{value}</span>
+    </div>
   );
 }

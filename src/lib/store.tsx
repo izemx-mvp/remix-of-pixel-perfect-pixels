@@ -14,6 +14,7 @@ import type {
   Product,
   Role,
   StockMove,
+  SupplierRating,
   Ticket,
   TicketStatus,
 } from "./types";
@@ -42,14 +43,20 @@ interface StoreValue {
   tickets: Ticket[];
   invoices: Invoice[];
   conversations: Conversation[];
+  ratings: SupplierRating[];
 
   transferToDealer: (productId: string, dealerId: string, qty: number) => void;
   adjustStock: (productId: string, qty: number, reason: string) => void;
-  createOrder: (dealerId: string, lines: OrderLine[]) => void;
+  createOrder: (dealerId: string, lines: OrderLine[], opts?: { status?: OrderStatus; silent?: boolean }) => string;
+  createSupply: (s: { productId: string; qty: number; supplierId: string; mode: "Importation" | "Fournisseur"; unitPrice: number; delayDays: number }) => string;
+  createInvoice: (orderId: string) => string | null;
+  updateInvoice: (id: string, patch: Partial<Invoice>) => void;
+  rateSupplier: (r: Omit<SupplierRating, "id" | "date">) => void;
+  escalateConversation: (conversationId: string, subject: string, type: Ticket["type"]) => void;
   advanceOrder: (orderId: string, status: OrderStatus) => void;
   confirmReception: (orderId: string) => void;
   advanceImport: (importId: string) => void;
-  createTicket: (t: Omit<Ticket, "id" | "messages" | "notes" | "escalated" | "status" | "date">) => void;
+  createTicket: (t: Omit<Ticket, "id" | "messages" | "notes" | "escalated" | "status" | "date">, escalated?: boolean) => void;
   updateTicket: (id: string, patch: Partial<Ticket>) => void;
   replyTicket: (id: string, from: "Revendeur" | "SINOPHRA", text: string) => void;
   sendMessage: (conversationId: string, text: string) => void;
@@ -70,9 +77,10 @@ const IMPORT_FLOW: ImportStatus[] = [
 ];
 
 export const ORDER_FLOW: OrderStatus[] = [
-  "Demande envoyée",
+  "Commande reçue",
   "Validée",
   "Préparation",
+  "Prête",
   "Expédiée",
   "Livrée",
   "Réception confirmée",
@@ -100,6 +108,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [tickets, setTickets] = useState<Ticket[]>(mock.tickets);
   const [invoices, setInvoices] = useState<Invoice[]>(mock.invoices);
   const [conversations, setConversations] = useState<Conversation[]>(mock.conversations);
+  const [ratings, setRatings] = useState<SupplierRating[]>([
+    { id: "R1", supplierId: "S9", scores: { Qualité: 5, Prix: 5, Délai: 3, Communication: 4, Conformité: 5, Service: 4, Fiabilité: 5 }, comment: "Très bonne qualité, délais maritimes longs.", author: "Imane Tazi", date: mock.imports[0]!.orderDate },
+    { id: "R2", supplierId: "S10", scores: { Qualité: 4, Prix: 4, Délai: 5, Communication: 5, Conformité: 5, Service: 5, Fiabilité: 5 }, comment: "Réactif, idéal pour les urgences batteries.", author: "Yassine Berrada", date: mock.imports[1]!.orderDate },
+    { id: "R3", supplierId: "S2", scores: { Qualité: 3, Prix: 4, Délai: 2, Communication: 3, Conformité: 3, Service: 3, Fiabilité: 3 }, comment: "Retards répétés au dernier trimestre.", author: "Mehdi Naciri", date: mock.imports[2]!.orderDate },
+  ]);
 
   const addMove = useCallback((m: Omit<StockMove, "id" | "date" | "ref">) => {
     setMoves((prev) => [
@@ -149,6 +162,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       tickets,
       invoices,
       conversations,
+      ratings,
 
       transferToDealer: (productId, dealerId, qty) => {
         const product = products.find((p) => p.id === productId);
@@ -181,22 +195,114 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         toast.success("Stock ajusté");
       },
 
-      createOrder: (dealerId, lines) => {
+      createOrder: (dealerId, lines, opts) => {
         const id = `CMD-${1100 + orders.length}`;
         const now = new Date().toISOString();
+        const status: OrderStatus = opts?.status ?? "Commande reçue";
         setOrders((prev) => [
           {
             id,
             dealerId,
             date: now,
             lines,
-            status: "Demande envoyée",
+            status,
             expectedDelivery: new Date(Date.now() + 7 * 864e5).toISOString(),
-            history: [{ status: "Demande envoyée", date: now }],
+            history: [{ status: "Commande reçue", date: now }, ...(status !== "Commande reçue" ? [{ status, date: now }] : [])],
           },
           ...prev,
         ]);
-        toast.success(`Commande ${id} envoyée à SINOPHRA`);
+        if (!opts?.silent) toast.success(`Commande ${id} envoyée à SINOPHRA`);
+        return id;
+      },
+
+      createSupply: ({ productId, qty, supplierId, mode, unitPrice, delayDays }) => {
+        const supplier = mock.suppliers.find((x) => x.id === supplierId);
+        const id = `${mode === "Importation" ? "IMP" : "APP"}-${2026}${300 + imports.length}`;
+        const now = new Date().toISOString();
+        setImports((prev) => [
+          {
+            id,
+            supplierId,
+            orderDate: now,
+            origin: supplier?.country === "Chine" ? "Ningbo, Chine" : (supplier?.country ?? "—"),
+            lines: [{ productId, qty, unitPrice }],
+            status: "Commandé",
+            eta: new Date(Date.now() + delayDays * 864e5).toISOString(),
+            semiAssembled: false,
+            mode,
+            timeline: [{ status: "Commandé", date: now }],
+          },
+          ...prev,
+        ]);
+        setProducts((prev) => prev.map((p) => (p.id === productId ? { ...p, inTransit: p.inTransit + qty } : p)));
+        toast.success(mode === "Importation" ? "Dossier d'importation créé avec succès." : `Commande fournisseur ${id} envoyée à ${supplier?.name ?? ""}.`);
+        return id;
+      },
+
+      createInvoice: (orderId) => {
+        const order = orders.find((o) => o.id === orderId);
+        if (!order) return null;
+        const existing = invoices.find((i) => i.orderId === orderId);
+        if (existing) {
+          toast.info(`Facture ${existing.id} déjà rattachée à cette commande`);
+          return existing.id;
+        }
+        const ht = order.lines.reduce((s, l) => s + l.qty * l.unitPrice, 0);
+        const id = `FAC-${2026}${200 + invoices.length}`;
+        setInvoices((prev) => [
+          {
+            id,
+            dealerId: order.dealerId,
+            orderId,
+            amount: Math.round(ht * 1.2),
+            date: new Date().toISOString(),
+            dueDate: new Date(Date.now() + 30 * 864e5).toISOString(),
+            status: "Envoyée",
+          },
+          ...prev,
+        ]);
+        toast.success(`Facture ${id} créée et rattachée à ${orderId}`);
+        return id;
+      },
+
+      updateInvoice: (id, patch) => {
+        setInvoices((prev) => prev.map((i) => (i.id === id ? { ...i, ...patch } : i)));
+        toast.success(`Facture ${id} mise à jour`);
+      },
+
+      rateSupplier: (r) => {
+        setRatings((prev) => [{ ...r, id: nextId("R"), date: new Date().toISOString() }, ...prev]);
+        toast.success("Évaluation enregistrée — analyse IA mise à jour");
+      },
+
+      escalateConversation: (conversationId, subject, type) => {
+        const conv = conversations.find((c) => c.id === conversationId);
+        if (!conv) return;
+        const customer = mock.customers.find((c) => c.dealerId === conv.dealerId && c.name === conv.customerName) ??
+          mock.customers.find((c) => c.dealerId === conv.dealerId)!;
+        const id = nextId("SAV");
+        setTickets((prev) => [
+          {
+            id,
+            dealerId: conv.dealerId,
+            customerId: customer.id,
+            productId: customer.productId,
+            serial: customer.serial,
+            subject,
+            priority: "Haute",
+            status: "Nouveau",
+            date: new Date().toISOString(),
+            escalated: true,
+            type,
+            assignee: "Sofia Kabbaj",
+            warranty: true,
+            parts: [],
+            messages: conv.messages.map((m) => ({ from: m.from === "client" ? ("Client" as const) : ("Revendeur" as const), text: m.text, date: m.at })),
+            notes: [`Créé depuis la conversation ${conv.id}`],
+          },
+          ...prev,
+        ]);
+        toast.success(`Réclamation ${id} escaladée à SINOPHRA`);
       },
 
       advanceOrder: (orderId, status) => {
@@ -207,24 +313,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
               : o,
           ),
         );
-        if (status === "Validée") {
-          const order = orders.find((o) => o.id === orderId);
-          if (order) {
-            const amount = order.lines.reduce((s, l) => s + l.qty * l.unitPrice, 0);
-            setInvoices((prev) => [
-              {
-                id: `FAC-${2026}${200 + prev.length}`,
-                dealerId: order.dealerId,
-                orderId,
-                amount,
-                date: new Date().toISOString(),
-                dueDate: new Date(Date.now() + 30 * 864e5).toISOString(),
-                status: "Envoyée",
-              },
-              ...prev,
-            ]);
-          }
-        }
         toast.success(`Commande ${orderId} : ${status}`);
       },
 
@@ -292,10 +380,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         }
       },
 
-      createTicket: (t) => {
+      createTicket: (t, escalated = false) => {
         const id = nextId("SAV");
         setTickets((prev) => [
-          { ...t, id, status: "Nouveau", escalated: false, date: new Date().toISOString(), messages: [], notes: [] },
+          { ...t, id, status: "Nouveau", escalated, date: new Date().toISOString(), messages: [], notes: [] },
           ...prev,
         ]);
         toast.success(`Ticket ${id} créé`);
@@ -303,7 +391,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
       updateTicket: (id, patch) => {
         setTickets((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)));
-        if (patch.escalated) toast.success("Ticket escaladé au SAV réseau SINOPHRA");
+        if (patch.escalated) toast.success("Réclamation escaladée à SINOPHRA");
         else if (patch.status) toast.success(`Ticket ${id} : ${patch.status}`);
       },
 
@@ -331,7 +419,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         );
       },
     }),
-    [session, products, dealerStock, orders, moves, imports, tickets, invoices, conversations, addMove, bumpDealerStock, login],
+    [session, products, dealerStock, orders, moves, imports, tickets, invoices, conversations, ratings, addMove, bumpDealerStock, login],
   );
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

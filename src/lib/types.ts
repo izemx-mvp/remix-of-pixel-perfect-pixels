@@ -43,9 +43,10 @@ export interface DealerStockLine {
 }
 
 export type OrderStatus =
-  | "Demande envoyée"
+  | "Commande reçue"
   | "Validée"
   | "Préparation"
+  | "Prête"
   | "Expédiée"
   | "Livrée"
   | "Réception confirmée"
@@ -108,6 +109,7 @@ export interface ImportFile {
   eta: string;
   realDate?: string;
   semiAssembled: boolean;
+  mode: "Importation" | "Fournisseur";
   timeline: { status: string; date: string }[];
 }
 
@@ -158,6 +160,8 @@ export interface Ticket {
   status: TicketStatus;
   date: string;
   escalated: boolean;
+  type: TicketType;
+  assignee: string;
   warranty: boolean;
   parts: string[];
   messages: { from: "Revendeur" | "SINOPHRA" | "Client"; text: string; date: string }[];
@@ -191,3 +195,14 @@ export type Role =
   | "Responsable Commercial"
   | "Responsable SAV"
   | "Revendeur";
+
+export type TicketType = "SAV" | "Garantie" | "Pièce" | "Produit" | "Livraison" | "Facturation" | "Autre";
+
+export interface SupplierRating {
+  id: string;
+  supplierId: string;
+  scores: Record<string, number>;
+  comment: string;
+  author: string;
+  date: string;
+}
