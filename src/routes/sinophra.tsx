@@ -1,12 +1,9 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import {
   BarChart3,
-  Bike,
-  Bot,
   Boxes,
   FileText,
   LayoutDashboard,
-  Package,
   Settings,
   Ship,
   ShoppingCart,
@@ -31,18 +28,16 @@ export const Route = createFileRoute("/sinophra")({
 
 const items: NavItem[] = [
   { label: "Dashboard", to: "/sinophra", icon: LayoutDashboard, exact: true },
-  { label: "Catalogue motos", to: "/sinophra/catalogue", icon: Bike },
-  { label: "Matériel & Pièces", to: "/sinophra/pieces", icon: Package },
-  { label: "Stock central", to: "/sinophra/stock", icon: Boxes },
-  { label: "Importations", to: "/sinophra/importations", icon: Ship },
+  { label: "Catalogue & Stock", to: "/sinophra/catalogue", icon: Boxes },
+  { label: "Approvisionnement", to: "/sinophra/approvisionnement", icon: Ship },
   { label: "Fournisseurs", to: "/sinophra/fournisseurs", icon: Truck },
   { label: "Revendeurs", to: "/sinophra/revendeurs", icon: Store },
   { label: "Commandes revendeurs", to: "/sinophra/commandes", icon: ShoppingCart },
   { label: "Facturation", to: "/sinophra/facturation", icon: FileText },
-  { label: "SAV réseau", to: "/sinophra/sav", icon: Wrench },
+  { label: "Réclamations", to: "/sinophra/reclamations", icon: Wrench },
   { label: "Analytics", to: "/sinophra/analytics", icon: BarChart3 },
-  { label: "Agents IA", to: "/sinophra/agents", icon: Bot },
-  { label: "Utilisateurs & Config", to: "/sinophra/configuration", icon: Users },
+  { label: "Utilisateurs", to: "/sinophra/utilisateurs", icon: Users },
+  { label: "Configuration", to: "/sinophra/configuration", icon: Settings },
 ];
 
 function SinophraLayout() {

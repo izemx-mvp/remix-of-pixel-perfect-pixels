@@ -6,36 +6,31 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader, SectionCard, StatusBadge } from "@/components/ui-kit";
+import { AiConfigPanel } from "@/components/AdminPanels";
 
 export const Route = createFileRoute("/sinophra/configuration")({
   head: () => ({
     meta: [
-      { title: "Configuration & utilisateurs — SINOPHRA" },
+      { title: "Configuration — SINOPHRA" },
       { name: "description", content: "Informations entreprise, seuils, notifications, rôles et connecteurs." },
-      { property: "og:title", content: "Configuration & utilisateurs — SINOPHRA" },
+      { property: "og:title", content: "Configuration — SINOPHRA" },
       { property: "og:description", content: "Paramétrage de la plateforme SINOPHRA." },
     ],
   }),
   component: ConfigPage,
 });
 
-const USERS = [
-  ["Yassine Berrada", "Administrateur SINOPHRA", "y.berrada@sinophra.ma"],
-  ["Imane Tazi", "Responsable Stock", "i.tazi@sinophra.ma"],
-  ["Mehdi Naciri", "Responsable Commercial", "m.naciri@sinophra.ma"],
-  ["Sofia Kabbaj", "Responsable SAV", "s.kabbaj@sinophra.ma"],
-];
 
 function ConfigPage() {
   return (
     <>
-      <PageHeader title="Configuration" subtitle="Entreprise, seuils, utilisateurs, rôles et connecteurs." />
+      <PageHeader title="Configuration" subtitle="Entreprise, seuils, IA & base de connaissance, connecteurs." />
 
       <Tabs defaultValue="entreprise">
         <TabsList className="flex-wrap">
           <TabsTrigger value="entreprise">Entreprise</TabsTrigger>
           <TabsTrigger value="seuils">Seuils & notifications</TabsTrigger>
-          <TabsTrigger value="users">Utilisateurs & rôles</TabsTrigger>
+          <TabsTrigger value="ia">Configuration IA & Base de connaissance</TabsTrigger>
           <TabsTrigger value="connecteurs">Connecteurs</TabsTrigger>
         </TabsList>
 
@@ -68,20 +63,8 @@ function ConfigPage() {
           </SectionCard>
         </TabsContent>
 
-        <TabsContent value="users" className="pt-4">
-          <SectionCard title="Utilisateurs" action={<Button size="sm" onClick={() => toast.success("Invitation envoyée")}>Inviter</Button>}>
-            <div className="space-y-2">
-              {USERS.map(([name, role, email]) => (
-                <div key={email} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-md border px-3 py-2 sm:flex sm:justify-between">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{name}</p>
-                    <p className="truncate text-xs text-muted-foreground">{email}</p>
-                  </div>
-                  <span className="shrink-0 rounded-full border px-2.5 py-0.5 text-xs">{role}</span>
-                </div>
-              ))}
-            </div>
-          </SectionCard>
+        <TabsContent value="ia" className="pt-4">
+          <AiConfigPanel />
         </TabsContent>
 
         <TabsContent value="connecteurs" className="pt-4">
