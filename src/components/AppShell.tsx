@@ -13,6 +13,7 @@ import {
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
+import { ChatBubble } from "@/components/ChatBubble";
 
 export interface NavItem {
   label: string;
@@ -165,7 +166,8 @@ export function AppShell({
           </div>
         </header>
 
-        <main className="flex-1 space-y-6 p-4 sm:p-6">{children}</main>
+        <main className="flex-1 space-y-6 p-4 pb-24 sm:p-6 sm:pb-24">{children}</main>
+        <ChatBubble />
       </div>
     </div>
   );
