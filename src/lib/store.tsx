@@ -57,6 +57,7 @@ interface StoreValue {
   confirmReception: (orderId: string) => void;
   advanceImport: (importId: string) => void;
   createTicket: (t: Omit<Ticket, "id" | "messages" | "notes" | "escalated" | "status" | "date">, escalated?: boolean) => void;
+  submitClaim: (t: Omit<Ticket, "id" | "messages" | "notes" | "escalated" | "status" | "date" | "assignee" | "parts">) => string;
   updateTicket: (id: string, patch: Partial<Ticket>) => void;
   replyTicket: (id: string, from: "Revendeur" | "SINOPHRA", text: string) => void;
   sendMessage: (conversationId: string, text: string) => void;
@@ -387,6 +388,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           ...prev,
         ]);
         toast.success(`Ticket ${id} créé`);
+      },
+
+      submitClaim: (t) => {
+        const id = `REC-2026-${String(tickets.filter((x) => x.id.startsWith("REC-")).length + 1).padStart(3, "0")}`;
+        setTickets((prev) => [
+          { ...t, id, status: "Envoyée à SINOPHRA", escalated: true, assignee: "Sofia Kabbaj", parts: [], date: new Date().toISOString(), messages: t.description ? [{ from: "Revendeur", text: t.description, date: new Date().toISOString() }] : [], notes: [] },
+          ...prev,
+        ]);
+        toast.success(`Réclamation ${id} envoyée à SINOPHRA`);
+        return id;
       },
 
       updateTicket: (id, patch) => {

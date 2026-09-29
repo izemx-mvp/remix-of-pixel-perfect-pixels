@@ -27,7 +27,7 @@ export const Route = createFileRoute("/sinophra/reclamations")({
   component: ClaimsPage,
 });
 
-export const TICKET_TYPES: Ticket["type"][] = ["SAV", "Garantie", "Pièce", "Produit", "Livraison", "Facturation", "Autre"];
+export const TICKET_TYPES: Ticket["type"][] = ["SAV", "Garantie", "Pièce", "Produit", "Livraison", "Facturation", "Commande", "Autre"];
 const OWNERS = ["Sofia Kabbaj", "Imane Tazi", "Mehdi Naciri", "Yassine Berrada"];
 
 function ClaimsPage() {
@@ -43,7 +43,7 @@ function ClaimsPage() {
   const prod = (id: string) => products.find((p) => p.id === id);
 
   const rows = tickets.filter((t) => (scope === "all" || t.escalated) && (type === "all" || t.type === type));
-  const urgent = tickets.filter((t) => t.escalated && t.status !== "Résolu" && (t.priority === "Critique" || t.priority === "Haute"));
+  const urgent = tickets.filter((t) => t.escalated && !["Résolu", "Clôturée"].includes(t.status) && (t.priority === "Critique" || t.priority === "Haute"));
 
   const columns: Column<Ticket>[] = [
     { key: "id", header: "Ticket", render: (t) => <span className="font-medium">{t.id}</span>, sortValue: (t) => t.id },
@@ -64,7 +64,7 @@ function ClaimsPage() {
       <PageHeader title="Réclamations" subtitle="Centralise les échanges SINOPHRA ↔ revendeurs : SAV, garanties, pièces, livraisons, facturation." />
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard label="Escaladées" value={tickets.filter((t) => t.escalated).length} icon={ArrowUpRight} tone="accent" />
-        <KpiCard label="Ouvertes" value={tickets.filter((t) => t.status !== "Résolu").length} icon={Inbox} />
+        <KpiCard label="Ouvertes" value={tickets.filter((t) => !["Résolu", "Clôturée"].includes(t.status)).length} icon={Inbox} />
         <KpiCard label="Urgentes" value={urgent.length} icon={AlertOctagon} tone="danger" />
         <KpiCard label="Sous garantie" value={tickets.filter((t) => t.warranty).length} icon={ShieldCheck} tone="success" />
       </div>
@@ -113,14 +113,21 @@ function ClaimsPage() {
                 <div className="grid gap-2 sm:grid-cols-3">
                   <Select value={selected.status} onValueChange={(v) => updateTicket(selected.id, { status: v as Ticket["status"] })}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>{TICKET_FLOW.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+                    <SelectContent>{[...TICKET_FLOW, ...(["Envoyée à SINOPHRA", "Réponse SINOPHRA", "Info demandée", "Clôturée"] as const).filter((x) => !TICKET_FLOW.includes(x))].map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                   </Select>
                   <Select value={selected.assignee} onValueChange={(v) => { updateTicket(selected.id, { assignee: v }); toast.success(`Affecté à ${v}`); }}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>{OWNERS.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
                   </Select>
-                  <Button variant="outline" disabled={selected.status === "Résolu"} onClick={() => updateTicket(selected.id, { status: "Résolu" })}>Clôturer</Button>
+                  <Button variant="outline" disabled={selected.status === "Clôturée"} onClick={() => updateTicket(selected.id, { status: "Clôturée" })}>Clôturer</Button>
                 </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" variant="outline" onClick={() => updateTicket(selected.id, { status: "En analyse" })}>En analyse</Button>
+                  <Button size="sm" variant="outline" onClick={() => updateTicket(selected.id, { status: "En traitement" })}>Passer en traitement</Button>
+                  <Button size="sm" variant="outline" onClick={() => { replyTicket(selected.id, "SINOPHRA", "Merci de nous transmettre des informations complémentaires (photos, facture, n° de série)."); updateTicket(selected.id, { status: "Info demandée" }); }}>Demander une information</Button>
+                  <Button size="sm" onClick={() => updateTicket(selected.id, { status: "Résolu" })}>Résoudre</Button>
+                </div>
+                {selected.description && <p className="rounded-md border p-3 text-sm">{selected.description}{selected.attachment ? ` · Pièce jointe : ${selected.attachment}` : ""}{selected.orderId ? ` · Commande : ${selected.orderId}` : ""}</p>}
                 <Tabs defaultValue="msgs">
                   <TabsList className="h-auto flex-wrap">
                     <TabsTrigger value="msgs">Messages</TabsTrigger>
@@ -138,7 +145,7 @@ function ClaimsPage() {
                     <div className="flex items-center gap-2 text-xs text-muted-foreground"><Paperclip className="h-3.5 w-3.5" /> photo_panne.jpg · rapport_diagnostic.pdf</div>
                     <div className="flex gap-2">
                       <Input value={reply} onChange={(e) => setReply(e.target.value)} placeholder="Répondre au revendeur…" />
-                      <Button disabled={!reply} onClick={() => { replyTicket(selected.id, "SINOPHRA", reply); setReply(""); }}>Répondre</Button>
+                      <Button disabled={!reply} onClick={() => { replyTicket(selected.id, "SINOPHRA", reply); updateTicket(selected.id, { status: "Réponse SINOPHRA" }); setReply(""); }}>Répondre</Button>
                     </div>
                   </TabsContent>
                   <TabsContent value="info" className="pt-4">

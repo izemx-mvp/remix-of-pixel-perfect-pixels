@@ -65,20 +65,22 @@ function SavModule() {
   const [faqOpen, setFaqOpen] = useState<string>("");
   const [docs, setDocs] = useState<Doc[]>(INITIAL_DOCS);
   const [attach, setAttach] = useState<Record<string, string[]>>({});
+  const [newOpen, setNewOpen] = useState(false);
   const [links, setLinks] = useState<Record<string, string>>({});
 
-  const statusOf = (t: Ticket) => closed.includes(t.id) ? "Fermé" : t.escalated && t.status !== "Résolu" ? "Escaladé SINOPHRA" : t.status === "Diagnostic" ? "En analyse" : t.status === "Pièce requise" ? "En attente client" : t.status;
+  const statusOf = (t: Ticket): string => closed.includes(t.id) ? "Fermé" : t.id.startsWith("REC-") ? t.status : t.escalated && t.status !== "Résolu" ? "Escaladé SINOPHRA" : t.status === "Diagnostic" ? "En analyse" : t.status === "Pièce requise" ? "En attente client" : t.status;
   const custOf = (t: Ticket) => customers.find((c) => c.id === t.customerId);
   const prodOf = (id: string) => products.find((p) => p.id === id);
   const openFaq = (q: string) => { setOpenId(null); setTab("faq"); setFaqOpen(q); };
 
-  const open = tickets.filter((t) => !["Résolu", "Fermé"].includes(statusOf(t)));
+  const open = tickets.filter((t) => !["Résolu", "Fermé", "Clôturée"].includes(statusOf(t)));
   const attention = open.filter((t) => t.priority === "Haute" || t.priority === "Critique" || t.escalated).concat(open).filter((t, i, a) => a.indexOf(t) === i).slice(0, 5);
   const ticket = tickets.find((t) => t.id === openId);
 
   return (
     <>
-      <PageHeader title="SAV & Réclamations" subtitle="SAV, réclamations, conversations clients, garanties, FAQ et documents." />
+      <PageHeader title="SAV & Réclamations" subtitle="SAV, réclamations, conversations clients, garanties, FAQ et documents." actions={<Button onClick={() => setNewOpen(true)}><Plus className="h-4 w-4" /> Ajouter une réclamation</Button>} />
+      <NewClaimDialog open={newOpen} onOpenChange={setNewOpen} onCreated={() => setTab("cases")} />
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="h-auto flex-wrap">
           <TabsTrigger value="overview">Vue générale</TabsTrigger>
@@ -377,5 +379,54 @@ function DocsPane({ docs, setDocs }: { docs: Doc[]; setDocs: (f: (d: Doc[]) => D
         </DialogContent>
       </Dialog>
     </SectionCard>
+  );
+}
+
+const CLAIM_TYPES: Ticket["type"][] = ["SAV", "Garantie", "Produit", "Pièce", "Livraison", "Commande", "Facturation", "Autre"];
+
+function NewClaimDialog({ open, onOpenChange, onCreated }: { open: boolean; onOpenChange: (o: boolean) => void; onCreated: () => void }) {
+  const { products, submitClaim } = useStore();
+  const { dealer, customers, orders } = useDealerScope();
+  const [customerId, setCustomerId] = useState("");
+  const [orderId, setOrderId] = useState("");
+  const [type, setType] = useState<Ticket["type"]>("SAV");
+  const [priority, setPriority] = useState<Ticket["priority"]>("Normale");
+  const [subject, setSubject] = useState("");
+  const [desc, setDesc] = useState("");
+  const [file, setFile] = useState("");
+  const c = customers.find((x) => x.id === customerId);
+  const send = () => {
+    if (!c) return;
+    submitClaim({ dealerId: dealer.id, customerId: c.id, productId: c.productId, serial: c.serial, subject, type, priority, warranty: new Date(c.warrantyUntil) > new Date(), description: desc, ...(orderId ? { orderId } : {}), ...(file ? { attachment: file } : {}) });
+    onOpenChange(false); onCreated(); setCustomerId(""); setOrderId(""); setSubject(""); setDesc(""); setFile("");
+  };
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
+        <DialogHeader><DialogTitle>Ajouter une réclamation</DialogTitle></DialogHeader>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="space-y-1"><Label>Client</Label>
+            <Select value={customerId} onValueChange={setCustomerId}><SelectTrigger><SelectValue placeholder="Choisir" /></SelectTrigger>
+              <SelectContent>{customers.map((x) => <SelectItem key={x.id} value={x.id}>{x.name}</SelectItem>)}</SelectContent></Select></div>
+          <div className="space-y-1"><Label>Moto / Produit</Label><Input readOnly value={c ? products.find((p) => p.id === c.productId)?.name ?? "" : ""} /></div>
+          <div className="space-y-1"><Label>Numéro de série</Label><Input readOnly value={c?.serial ?? ""} /></div>
+          <div className="space-y-1"><Label>Commande liée</Label>
+            <Select value={orderId} onValueChange={setOrderId}><SelectTrigger><SelectValue placeholder="Aucune" /></SelectTrigger>
+              <SelectContent>{orders.slice(0, 10).map((o) => <SelectItem key={o.id} value={o.id}>{o.id}</SelectItem>)}</SelectContent></Select></div>
+          <div className="space-y-1"><Label>Type</Label>
+            <Select value={type} onValueChange={(v) => setType(v as Ticket["type"])}><SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>{CLAIM_TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent></Select></div>
+          <div className="space-y-1"><Label>Priorité</Label>
+            <Select value={priority} onValueChange={(v) => setPriority(v as Ticket["priority"])}><SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>{["Faible", "Normale", "Haute", "Urgente"].map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent></Select></div>
+          <div className="space-y-1 sm:col-span-2"><Label>Sujet</Label><Input value={subject} onChange={(e) => setSubject(e.target.value)} /></div>
+          <div className="space-y-1 sm:col-span-2"><Label>Description</Label><Textarea value={desc} onChange={(e) => setDesc(e.target.value)} /></div>
+          <button type="button" onClick={() => setFile(`photo-reclamation-${Date.now() % 1000}.jpg`)} className="flex items-center justify-center gap-2 rounded-lg border border-dashed p-4 text-sm text-muted-foreground transition-colors hover:bg-accent sm:col-span-2">
+            <Paperclip className="h-4 w-4" />{file || "Ajouter une pièce jointe (simulation)"}
+          </button>
+        </div>
+        <DialogFooter><Button disabled={!c || !subject.trim()} onClick={send}><Send className="h-4 w-4" /> Envoyer à SINOPHRA</Button></DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

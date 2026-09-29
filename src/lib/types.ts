@@ -147,7 +147,11 @@ export type TicketStatus =
   | "En analyse"
   | "Pièce requise"
   | "En traitement"
-  | "Résolu";
+  | "Résolu"
+  | "Envoyée à SINOPHRA"
+  | "Réponse SINOPHRA"
+  | "Info demandée"
+  | "Clôturée";
 
 export interface Ticket {
   id: string;
@@ -156,7 +160,10 @@ export interface Ticket {
   productId: string;
   serial: string;
   subject: string;
-  priority: "Basse" | "Normale" | "Haute" | "Critique";
+  priority: "Basse" | "Normale" | "Haute" | "Critique" | "Faible" | "Urgente";
+  description?: string;
+  orderId?: string;
+  attachment?: string;
   status: TicketStatus;
   date: string;
   escalated: boolean;
@@ -196,7 +203,7 @@ export type Role =
   | "Responsable SAV"
   | "Revendeur";
 
-export type TicketType = "SAV" | "Garantie" | "Pièce" | "Produit" | "Livraison" | "Facturation" | "Autre";
+export type TicketType = "SAV" | "Garantie" | "Pièce" | "Produit" | "Livraison" | "Facturation" | "Commande" | "Autre";
 
 export interface SupplierRating {
   id: string;
