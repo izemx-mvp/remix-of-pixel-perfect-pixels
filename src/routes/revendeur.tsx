@@ -19,7 +19,7 @@ const items: NavItem[] = [
   { label: "Catalogue & Stock", to: "/revendeur/catalogue", icon: Boxes },
   { label: "Mes commandes", to: "/revendeur/commandes", icon: ShoppingCart },
   { label: "Mes clients", to: "/revendeur/clients", icon: Users },
-  { label: "Réclamations & Conversations", to: "/revendeur/reclamations", icon: MessagesSquare },
+  { label: "SAV & Réclamations", to: "/revendeur/reclamations", icon: MessagesSquare },
   { label: "Factures", to: "/revendeur/factures", icon: FileText },
   { label: "Analytics", to: "/revendeur/analytics", icon: BarChart3 },
   { label: "Utilisateurs", to: "/revendeur/utilisateurs", icon: UserCog },
